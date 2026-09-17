@@ -69,7 +69,9 @@ export function CoinList({ state, query, onRetry, onShowMore, onSelectCoin }: Co
         </caption>
         <thead>
           <tr>
-            <th scope="col">Rank</th>
+            <th scope="col" className="rank-header">
+              Rank
+            </th>
             <th scope="col">Coin</th>
             <SortableHeader
               label="Price"

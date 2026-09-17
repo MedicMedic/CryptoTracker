@@ -285,9 +285,16 @@ td {
 
 /* Below this, the coin's full name + full-precision price no longer fit
    alongside Rank and 24h without squeezing them unreadable or forcing the
-   whole table to scroll. Show the ticker instead of the name, and a K/M
-   price, so all four columns stay visible without either. */
+   whole table to scroll. Show the ticker instead of the name, a K/M price,
+   drop the Rank column (a coin's position in the list already says roughly
+   where it ranks, and it's the least essential of the four), and tighten
+   the remaining padding — so Coin/Price/24h stay comfortably readable.  */
 @media (max-width: 480px) {
+  .rank,
+  .rank-header {
+    display: none;
+  }
+
   .coin-name-full {
     position: absolute;
     width: 1px;
@@ -311,6 +318,27 @@ td {
 
   .price-compact {
     display: inline;
+  }
+
+  header,
+  main,
+  footer {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  th,
+  td {
+    padding-right: 6px;
+  }
+
+  .coin-name {
+    gap: 6px;
+  }
+
+  .coin-name img {
+    width: 20px;
+    height: 20px;
   }
 }
 
