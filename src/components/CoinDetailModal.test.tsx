@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, test } from 'vitest'
 import App from '../App'
@@ -56,4 +56,27 @@ describe('CoinDetailModal', () => {
     expect(alert).toHaveTextContent('Service unavailable')
     expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
   }, 10000)
+
+  test('has its own refresh control, distinct from the list\'s, that refetches the chart', async () => {
+    render(<App />)
+    await screen.findByRole('table')
+    await userEvent.click(screen.getByRole('button', { name: /Bitcoin BTC/ }))
+
+    const dialog = await screen.findByRole('dialog')
+    await within(dialog).findByRole('img', { name: /Hourly price for Bitcoin/ })
+    within(dialog).getByText(/^Updated /)
+
+    let requestCount = 0
+    server.use(
+      http.get(`${API_BASE}/coins/:id/market_chart`, () => {
+        requestCount++
+        return HttpResponse.json({ prices: [] })
+      }),
+    )
+
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Refresh' }))
+
+    await within(dialog).findByText('No price history available for this coin.')
+    expect(requestCount).toBe(1)
+  })
 })

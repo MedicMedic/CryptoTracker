@@ -8,6 +8,7 @@ import type { RequestState } from '../types/request-state'
 export function useCoinHistory(coinId: string | null) {
   const [state, setState] = useState<RequestState<PricePoint[]>>({ status: 'idle' })
   const [reloadToken, setReloadToken] = useState(0)
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null)
 
   useEffect(() => {
     if (!coinId) {
@@ -16,10 +17,16 @@ export function useCoinHistory(coinId: string | null) {
     }
 
     const controller = new AbortController()
-    setState({ status: 'loading' })
+    // A manual refresh re-fetches the same coin, not a different one (the
+    // modal fully unmounts between coins) — keep the current chart on
+    // screen instead of blanking it while the new data loads.
+    setState((prev) => (prev.status === 'success' ? prev : { status: 'loading' }))
 
     fetchCoinHistory(coinId, controller.signal)
-      .then((data) => setState({ status: 'success', data }))
+      .then((data) => {
+        setState({ status: 'success', data })
+        setLastUpdatedAt(Date.now())
+      })
       .catch((err) => {
         if (controller.signal.aborted) return
         setState({
@@ -32,5 +39,5 @@ export function useCoinHistory(coinId: string | null) {
     return () => controller.abort()
   }, [coinId, reloadToken])
 
-  return { state, retry: () => setReloadToken((n) => n + 1) }
+  return { state, retry: () => setReloadToken((n) => n + 1), lastUpdatedAt }
 }

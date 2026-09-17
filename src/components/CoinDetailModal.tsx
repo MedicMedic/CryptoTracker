@@ -4,6 +4,7 @@ import { useDelayedFlag } from '../hooks/useDelayedFlag'
 import { formatChange, formatPrice } from '../lib/format'
 import type { Coin } from '../types/coin'
 import { PriceChart } from './PriceChart'
+import { RefreshBar } from './RefreshBar'
 import { Spinner } from './Spinner'
 
 interface CoinDetailModalProps {
@@ -12,7 +13,7 @@ interface CoinDetailModalProps {
 }
 
 export function CoinDetailModal({ coin, onClose }: CoinDetailModalProps) {
-  const { state, retry } = useCoinHistory(coin.id)
+  const { state, retry, lastUpdatedAt } = useCoinHistory(coin.id)
   const showSpinner = useDelayedFlag(state.status === 'loading')
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -86,6 +87,8 @@ export function CoinDetailModal({ coin, onClose }: CoinDetailModalProps) {
             </p>
           </div>
         </div>
+
+        <RefreshBar lastUpdatedAt={lastUpdatedAt} onRefresh={retry} />
 
         {state.status === 'loading' && showSpinner && <Spinner />}
 
