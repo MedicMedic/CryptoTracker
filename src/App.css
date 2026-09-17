@@ -175,11 +175,6 @@ main:focus {
 
 table {
   width: 100%;
-  /* Without a floor, table-layout:auto squeezes every column (including the
-     nowrap Price/24h ones) to fit whatever width is available, shrinking
-     them toward unreadable instead of triggering .table-wrap's scroll. This
-     forces the overflow so narrow screens scroll instead of squash. */
-  min-width: 440px;
   border-collapse: collapse;
   font-variant-numeric: tabular-nums;
 }
@@ -272,6 +267,10 @@ td {
   white-space: nowrap;
 }
 
+.price-compact {
+  display: none;
+}
+
 .change {
   white-space: nowrap;
 }
@@ -282,6 +281,37 @@ td {
 
 .change.negative {
   color: var(--negative);
+}
+
+/* Below this, the coin's full name + full-precision price no longer fit
+   alongside Rank and 24h without squeezing them unreadable or forcing the
+   whole table to scroll. Show the ticker instead of the name, and a K/M
+   price, so all four columns stay visible without either. */
+@media (max-width: 480px) {
+  .coin-name-full {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .symbol {
+    color: var(--ink);
+    font-size: 14px;
+  }
+
+  .price-full {
+    display: none;
+  }
+
+  .price-compact {
+    display: inline;
+  }
 }
 
 footer {

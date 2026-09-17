@@ -27,6 +27,7 @@ Copy `.env.example` to `.env` only if you need to point at something other than 
 4. Click Refresh (next to the "Updated <time>" indicator) to get a new snapshot without reloading the page.
 5. Click a coin's name to open a modal with its price history — roughly the last 48 hours, hourly — as a line chart with a hover tooltip and a "Show hourly data as a table" fallback. A dashed segment extends the line one hour past the last real point: a naive trend line (least squares over the last several hours), clearly labeled as not a forecast, with an "ⓘ" next to it explaining how it's calculated.
 6. If a request fails, the list (or the chart) shows the server's own error message and a "Try again" button when the failure is one that might succeed on retry (network errors, 5xx, rate limiting) — if it won't, the message says so instead of showing a button.
+7. Below ~480px wide, the list switches each coin's name to just its ticker and its price to a K/M shorthand (e.g. "$76.1K") so Rank, Coin, Price and 24h all still fit without squeezing or scrolling; the coin's full name stays available to screen readers at any width. The price chart inside the modal is denser and scrolls horizontally on its own at that width instead of shrinking its text past legible.
 
 ## Operating it by keyboard
 

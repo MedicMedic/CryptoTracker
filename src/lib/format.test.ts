@@ -1,5 +1,16 @@
 import { describe, expect, test } from 'vitest'
-import { formatAxisPrice, formatPrice } from './format'
+import { formatAxisPrice, formatCompactPrice, formatPrice } from './format'
+
+describe('formatCompactPrice', () => {
+  test('shortens a large price to K/M for the narrow-width list layout', () => {
+    expect(formatCompactPrice(76085.469233)).toBe('$76.1K')
+    expect(formatCompactPrice(1250000)).toBe('$1.3M')
+  })
+
+  test('defers to formatPrice under $1, where compact notation would round away every digit', () => {
+    expect(formatCompactPrice(0.0791234)).toBe(formatPrice(0.0791234))
+  })
+})
 
 describe('formatAxisPrice', () => {
   test('rounds a raw historical-series float to a clean whole-dollar tick', () => {

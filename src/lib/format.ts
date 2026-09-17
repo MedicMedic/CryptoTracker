@@ -50,6 +50,21 @@ export function formatChange(change: number | null): string {
   return change == null ? '—' : percentFormatter.format(change / 100)
 }
 
+const compactPriceFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  notation: 'compact',
+  maximumFractionDigits: 1,
+})
+
+// K/M shorthand for the coin list at narrow widths, where the full price
+// ("$76,085.47") is what pushes the 24h column off-screen. Below $1, compact
+// notation would round every significant digit away ("$0.0"), and nothing
+// under $1 is long enough to need shortening anyway — defer to formatPrice.
+export function formatCompactPrice(value: number): string {
+  return value < 1 ? formatPrice(value) : compactPriceFormatter.format(value)
+}
+
 const axisPriceFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 
 export function roundToSignificant(value: number, sig = 3): number {
