@@ -2,6 +2,8 @@
 
 A small React + TypeScript app that shows live prices for the top cryptocurrencies and lets you search for a specific coin, backed by the public [CoinGecko API](https://www.coingecko.com/en/api).
 
+Adding a feature? See [CONTRIBUTING.md](CONTRIBUTING.md) for the code layout, where things go, and the parts that are easy to break.
+
 ## Running it
 
 ```bash
