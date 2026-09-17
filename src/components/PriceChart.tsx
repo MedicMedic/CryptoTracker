@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { PricePoint } from '../types/price-point'
 import { formatAxisPrice } from '../lib/format'
 
@@ -51,9 +51,17 @@ function projectTrend(data: PricePoint[]): Trend | null {
 
 export function PriceChart({ data, coinName }: { data: PricePoint[]; coinName: string }) {
   const svgRef = useRef<SVGSVGElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
 
   const trend = useMemo(() => projectTrend(data), [data])
+
+  // When the chart is wider than its container (narrow screens), start
+  // scrolled to the right — the most recent price and the trend line are
+  // there, not the 48-hour-old start. A no-op when there's nothing to scroll.
+  useLayoutEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollLeft = scrollRef.current.scrollWidth
+  }, [data])
 
   const { xScale, yScale, linePath, dashPath, gridLines } = useMemo(() => {
     const times = data.map((p) => p.time)
@@ -121,7 +129,7 @@ export function PriceChart({ data, coinName }: { data: PricePoint[]; coinName: s
 
   return (
     <div className="price-chart">
-      <div className="price-chart-scroll">
+      <div className="price-chart-scroll" ref={scrollRef}>
       <svg
         ref={svgRef}
         role="img"
