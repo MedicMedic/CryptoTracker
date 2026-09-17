@@ -28,7 +28,12 @@ function App() {
         Skip to main content
       </a>
       <header>
-        <h1>CryptoTracker</h1>
+        <nav className="navbar" aria-label="Primary">
+          <h1 className="navbar-brand">CryptoTracker</h1>
+          <a className="navbar-link" href="https://medicmedic.github.io" target="_blank" rel="noreferrer">
+            Stellar Site
+          </a>
+        </nav>
         <p className="tagline">Live prices for the top cryptocurrencies.</p>
       </header>
       <main id="main" tabIndex={-1}>
