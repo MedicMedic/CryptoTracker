@@ -121,6 +121,32 @@ td {
   min-width: 0;
 }
 
+.sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sort-icon {
+  font-size: 9px;
+  color: var(--ink-soft);
+  opacity: 0.6;
+}
+
+.sort-icon.active {
+  color: var(--accent);
+  opacity: 1;
+}
+
 .rank {
   color: var(--ink-soft);
   white-space: nowrap;

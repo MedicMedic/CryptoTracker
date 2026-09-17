@@ -26,7 +26,17 @@ export async function fetchCoins(query: string, signal: AbortSignal): Promise<Co
   if (ids) params.set('ids', ids.join(','))
 
   const data = await requestWithRetry<unknown[]>(`${API_BASE}/coins/markets?${params}`, { signal })
-  return data.filter(isCoin)
+  return data.filter(isCoin).sort(byRankThenPrice)
+}
+
+// CoinGecko's own market_cap_rank occasionally ties two coins at the same
+// number (a newly-listed asset the rank field hasn't caught up to yet) —
+// break the tie by price, descending, so the order stays deterministic.
+function byRankThenPrice(a: Coin, b: Coin): number {
+  const rankA = a.market_cap_rank ?? Infinity
+  const rankB = b.market_cap_rank ?? Infinity
+  if (rankA !== rankB) return rankA - rankB
+  return b.current_price - a.current_price
 }
 
 async function searchIds(query: string, signal: AbortSignal): Promise<string[]> {
