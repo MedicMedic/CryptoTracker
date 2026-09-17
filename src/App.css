@@ -1,0 +1,171 @@
+header {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 0;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.tagline {
+  color: var(--ink-soft);
+  margin: 4px 0 0;
+}
+
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+main:focus {
+  outline: none;
+}
+
+.search-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 22rem;
+  margin-bottom: 20px;
+}
+
+.search-box label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.search-box input {
+  min-width: 0;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.status-message {
+  padding: 14px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--rule-soft);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+[role='alert'].status-message {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+
+.status-message button {
+  padding: 6px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  margin: 24px auto;
+  border: 3px solid var(--rule);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+th {
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0 10px 8px 0;
+  border-bottom: 2px solid var(--ink);
+}
+
+td {
+  padding: 10px 10px 10px 0;
+  border-bottom: 1px solid var(--rule);
+  min-width: 0;
+}
+
+.rank {
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.coin-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.coin-name span {
+  overflow-wrap: break-word;
+}
+
+.symbol {
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.price {
+  white-space: nowrap;
+}
+
+.change {
+  white-space: nowrap;
+}
+
+.change.positive {
+  color: var(--positive);
+}
+
+.change.negative {
+  color: var(--negative);
+}
+
+footer {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+footer a {
+  color: inherit;
+}
