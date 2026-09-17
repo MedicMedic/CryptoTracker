@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { useDelayedFlag } from '../hooks/useDelayedFlag'
 import type { RequestState } from '../types/request-state'
 import type { Coin } from '../types/coin'
 import { CoinRow } from './CoinRow'
 import { Spinner } from './Spinner'
+import { SortableHeader, type SortDir, type SortKey } from './SortableHeader'
 
 interface CoinListProps {
   state: RequestState<Coin[]>
@@ -10,8 +12,18 @@ interface CoinListProps {
   onRetry: () => void
 }
 
+function sortCoins(coins: Coin[], key: SortKey, dir: SortDir): Coin[] {
+  const value = (c: Coin) => (key === 'price' ? c.current_price : (c.price_change_percentage_24h ?? -Infinity))
+  return [...coins].sort((a, b) => (dir === 'asc' ? value(a) - value(b) : value(b) - value(a)))
+}
+
 export function CoinList({ state, query, onRetry }: CoinListProps) {
   const showSpinner = useDelayedFlag(state.status === 'loading')
+  const [sort, setSort] = useState<{ key: SortKey; dir: SortDir } | null>(null)
+
+  function toggleSort(key: SortKey) {
+    setSort((prev) => (!prev || prev.key !== key ? { key, dir: 'desc' } : { key, dir: prev.dir === 'desc' ? 'asc' : 'desc' }))
+  }
 
   if (state.status === 'idle') return null
   if (state.status === 'loading') return showSpinner ? <Spinner /> : null
@@ -35,6 +47,13 @@ export function CoinList({ state, query, onRetry }: CoinListProps) {
     )
   }
 
+  // Rank reflects each coin's position in the canonical (fetched) order and
+  // stays pinned to that coin — re-sorting by price/24h reorders the rows
+  // but never renumbers them, so a coin sorted to the bottom still shows
+  // its real rank instead of picking up a new one from its row position.
+  const rankById = new Map(state.data.map((coin, i) => [coin.id, i + 1]))
+  const rows = sort ? sortCoins(state.data, sort.key, sort.dir) : state.data
+
   return (
     <div className="table-wrap">
       <table>
@@ -45,13 +64,25 @@ export function CoinList({ state, query, onRetry }: CoinListProps) {
           <tr>
             <th scope="col">Rank</th>
             <th scope="col">Coin</th>
-            <th scope="col">Price</th>
-            <th scope="col">24h</th>
+            <SortableHeader
+              label="Price"
+              sortKey="price"
+              active={sort?.key ?? null}
+              dir={sort?.key === 'price' ? sort.dir : 'desc'}
+              onSort={toggleSort}
+            />
+            <SortableHeader
+              label="24h"
+              sortKey="change"
+              active={sort?.key ?? null}
+              dir={sort?.key === 'change' ? sort.dir : 'desc'}
+              onSort={toggleSort}
+            />
           </tr>
         </thead>
         <tbody>
-          {state.data.map((coin) => (
-            <CoinRow key={coin.id} coin={coin} />
+          {rows.map((coin) => (
+            <CoinRow key={coin.id} coin={coin} rank={rankById.get(coin.id) ?? 0} />
           ))}
         </tbody>
       </table>
