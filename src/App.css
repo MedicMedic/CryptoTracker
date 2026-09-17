@@ -175,6 +175,11 @@ main:focus {
 
 table {
   width: 100%;
+  /* Without a floor, table-layout:auto squeezes every column (including the
+     nowrap Price/24h ones) to fit whatever width is available, shrinking
+     them toward unreadable instead of triggering .table-wrap's scroll. This
+     forces the overflow so narrow screens scroll instead of squash. */
+  min-width: 440px;
   border-collapse: collapse;
   font-variant-numeric: tabular-nums;
 }
@@ -365,8 +370,17 @@ footer a {
 
 /* ---------- price chart ---------- */
 
+.price-chart {
+  /* The svg below has a floor width so its text/marks don't shrink past
+     legible along with the viewBox — on a narrow screen that floor makes
+     it wider than the modal, so this container (not the whole modal)
+     is what scrolls to show the rest of it. */
+  overflow-x: auto;
+}
+
 .price-chart svg {
   width: 100%;
+  min-width: 560px;
   height: auto;
   display: block;
   touch-action: none;
