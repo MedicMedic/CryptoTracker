@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import './App.css'
 import { CoinList } from './components/CoinList'
+import { RefreshBar } from './components/RefreshBar'
 import { SearchBox } from './components/SearchBox'
 import { useCoins } from './hooks/useCoins'
 
 function App() {
   const [query, setQuery] = useState('')
-  const { state, retry } = useCoins(query)
+  const { state, retry, lastUpdatedAt } = useCoins(query)
 
   return (
     <>
@@ -19,6 +20,7 @@ function App() {
       </header>
       <main id="main" tabIndex={-1}>
         <SearchBox value={query} onChange={setQuery} />
+        <RefreshBar lastUpdatedAt={lastUpdatedAt} onRefresh={retry} />
         <CoinList state={state} query={query} onRetry={retry} />
       </main>
       <footer>
