@@ -428,11 +428,12 @@ footer a {
 
 /* ---------- price chart ---------- */
 
-.price-chart {
+.price-chart-scroll {
   /* The svg below has a floor width so its text/marks don't shrink past
      legible along with the viewBox — on a narrow screen that floor makes
-     it wider than the modal, so this container (not the whole modal)
-     is what scrolls to show the rest of it. */
+     it wider than the modal, so this wrapper (just the chart graphic, not
+     the trend caption or the hourly-data table below it) is what scrolls
+     to show the rest of it. */
   overflow-x: auto;
 }
 

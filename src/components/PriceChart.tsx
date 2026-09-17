@@ -121,6 +121,7 @@ export function PriceChart({ data, coinName }: { data: PricePoint[]; coinName: s
 
   return (
     <div className="price-chart">
+      <div className="price-chart-scroll">
       <svg
         ref={svgRef}
         role="img"
@@ -185,6 +186,7 @@ export function PriceChart({ data, coinName }: { data: PricePoint[]; coinName: s
           </g>
         )}
       </svg>
+      </div>
 
       {trend && (
         <p className="chart-trend-caption">
