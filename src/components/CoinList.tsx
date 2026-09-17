@@ -8,9 +8,10 @@ interface CoinListProps {
   state: RequestState<Coin[]>
   query: string
   onRetry: () => void
+  onShowMore?: () => void
 }
 
-export function CoinList({ state, query, onRetry }: CoinListProps) {
+export function CoinList({ state, query, onRetry, onShowMore }: CoinListProps) {
   const showSpinner = useDelayedFlag(state.status === 'loading')
 
   if (state.status === 'idle') return null
@@ -55,6 +56,11 @@ export function CoinList({ state, query, onRetry }: CoinListProps) {
           ))}
         </tbody>
       </table>
+      {onShowMore && (
+        <button className="show-more" onClick={onShowMore}>
+          Show more
+        </button>
+      )}
     </div>
   )
 }

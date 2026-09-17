@@ -105,6 +105,18 @@ table {
   font-variant-numeric: tabular-nums;
 }
 
+.show-more {
+  display: block;
+  margin: 16px auto 0;
+  padding: 8px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 14px;
+}
+
 th {
   text-align: left;
   font-size: 12px;

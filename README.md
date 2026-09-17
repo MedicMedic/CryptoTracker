@@ -22,8 +22,9 @@ Copy `.env.example` to `.env` only if you need to point at something other than 
 ## Using it
 
 1. On load, the app fetches the top 50 coins by market cap and lists them with rank, price, and 24h change.
-2. Type in the search box to look up a specific coin by name or symbol (e.g. "doge"). The list narrows to matches after a short debounce.
-3. If a request fails, the list shows the server's own error message and a "Try again" button when the failure is one that might succeed on retry (network errors, 5xx, rate limiting).
+2. Click "Show more" to extend the default list in steps of 50, up to 150 coins.
+3. Type in the search box to look up a specific coin by name or symbol (e.g. "doge"). The list narrows to matches after a short debounce.
+4. If a request fails, the list shows the server's own error message and a "Try again" button when the failure is one that might succeed on retry (network errors, 5xx, rate limiting).
 
 ## Testing
 
@@ -35,7 +36,7 @@ Runs the Vitest suite in `src/App.test.tsx` against a mocked CoinGecko API (via 
 
 ## Limitations
 
-- No pagination — only the top 50 coins are shown in the default view.
+- Pagination is capped at 150 coins in the default view (three "Show more" clicks); there's no way to browse past that short of searching by name.
 - Search resolves through CoinGecko's `/search` endpoint (matched by name/symbol) and then re-fetches prices for those specific coins, so it costs two requests instead of one; there's no client-side-only fallback if `/search` is down.
 - No caching between renders — switching away from a search query and back re-fetches instead of reusing the last response.
 - Prices are not live-updating; refresh to get a new snapshot.

@@ -7,10 +7,11 @@ interface SearchResponse {
   coins: { id: string }[]
 }
 
-// Resolves the default top-50-by-market-cap view when `query` is empty,
-// otherwise resolves matching coins by name/symbol via the search endpoint
-// first, since /coins/markets itself has no text-search parameter.
-export async function fetchCoins(query: string, signal: AbortSignal): Promise<Coin[]> {
+// Resolves the default top-N-by-market-cap view when `query` is empty
+// (`perPage` controls N), otherwise resolves matching coins by name/symbol
+// via the search endpoint first, since /coins/markets itself has no
+// text-search parameter — `perPage` doesn't apply to a search result set.
+export async function fetchCoins(query: string, signal: AbortSignal, perPage = 50): Promise<Coin[]> {
   const trimmed = query.trim()
   const ids = trimmed ? await searchIds(trimmed, signal) : null
 
@@ -19,7 +20,7 @@ export async function fetchCoins(query: string, signal: AbortSignal): Promise<Co
   const params = new URLSearchParams({
     vs_currency: 'usd',
     order: 'market_cap_desc',
-    per_page: ids ? String(ids.length) : '50',
+    per_page: ids ? String(ids.length) : String(perPage),
     page: '1',
     sparkline: 'false',
   })
