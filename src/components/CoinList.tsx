@@ -10,6 +10,7 @@ interface CoinListProps {
   state: RequestState<Coin[]>
   query: string
   onRetry: () => void
+  onShowMore?: () => void
 }
 
 function sortCoins(coins: Coin[], key: SortKey, dir: SortDir): Coin[] {
@@ -17,7 +18,7 @@ function sortCoins(coins: Coin[], key: SortKey, dir: SortDir): Coin[] {
   return [...coins].sort((a, b) => (dir === 'asc' ? value(a) - value(b) : value(b) - value(a)))
 }
 
-export function CoinList({ state, query, onRetry }: CoinListProps) {
+export function CoinList({ state, query, onRetry, onShowMore }: CoinListProps) {
   const showSpinner = useDelayedFlag(state.status === 'loading')
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir } | null>(null)
 
@@ -86,6 +87,11 @@ export function CoinList({ state, query, onRetry }: CoinListProps) {
           ))}
         </tbody>
       </table>
+      {onShowMore && (
+        <button className="show-more" onClick={onShowMore}>
+          Show more
+        </button>
+      )}
     </div>
   )
 }
