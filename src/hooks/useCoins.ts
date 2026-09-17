@@ -10,6 +10,7 @@ import type { RequestState } from '../types/request-state'
 export function useCoins(query: string) {
   const [state, setState] = useState<RequestState<Coin[]>>({ status: 'idle' })
   const [reloadToken, setReloadToken] = useState(0)
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -20,6 +21,7 @@ export function useCoins(query: string) {
       try {
         const data = await fetchCoins(query, controller.signal)
         setState({ status: 'success', data })
+        setLastUpdatedAt(Date.now())
       } catch (err) {
         if (controller.signal.aborted) return
         setState({
@@ -36,5 +38,5 @@ export function useCoins(query: string) {
     }
   }, [query, reloadToken])
 
-  return { state, retry: () => setReloadToken((n) => n + 1) }
+  return { state, retry: () => setReloadToken((n) => n + 1), lastUpdatedAt }
 }

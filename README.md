@@ -38,7 +38,7 @@ Runs the Vitest suite in `src/App.test.tsx` against a mocked CoinGecko API (via 
 - No pagination — only the top 50 coins are shown in the default view.
 - Search resolves through CoinGecko's `/search` endpoint (matched by name/symbol) and then re-fetches prices for those specific coins, so it costs two requests instead of one; there's no client-side-only fallback if `/search` is down.
 - No caching between renders — switching away from a search query and back re-fetches instead of reusing the last response.
-- Prices are not live-updating; refresh to get a new snapshot.
+- Prices are not live-updating; use the Refresh button (or reload the page) to get a new snapshot.
 - Subject to CoinGecko's public rate limit (roughly 10–30 requests/minute); heavy typing in the search box can trip it despite the debounce.
 
 ## Decisions
