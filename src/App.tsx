@@ -6,17 +6,18 @@ import { SearchBox } from './components/SearchBox'
 import { useCoins } from './hooks/useCoins'
 
 const PAGE_SIZE = 50
-const MAX_PER_PAGE = 150
 
 function App() {
   const [query, setQuery] = useState('')
-  const [perPage, setPerPage] = useState(PAGE_SIZE)
-  const { state, retry, lastUpdatedAt } = useCoins(query, perPage)
+  const [count, setCount] = useState(PAGE_SIZE)
+  const { state, retry, lastUpdatedAt } = useCoins(query, count)
 
   // Only the default (unsearched) view is paginated — a search already
   // returns every match CoinGecko's /search endpoint has for that query.
-  const canShowMore =
-    !query.trim() && state.status === 'success' && state.data.length >= perPage && perPage < MAX_PER_PAGE
+  // fetchCoins pages through CoinGecko internally (250 per request) and
+  // returns fewer than `count` only once it's exhausted their coin list,
+  // so there's no separate cap to track here.
+  const canShowMore = !query.trim() && state.status === 'success' && state.data.length >= count
 
   return (
     <>
@@ -34,7 +35,7 @@ function App() {
           state={state}
           query={query}
           onRetry={retry}
-          onShowMore={canShowMore ? () => setPerPage((n) => Math.min(n + PAGE_SIZE, MAX_PER_PAGE)) : undefined}
+          onShowMore={canShowMore ? () => setCount((n) => n + PAGE_SIZE) : undefined}
         />
       </main>
       <footer>
