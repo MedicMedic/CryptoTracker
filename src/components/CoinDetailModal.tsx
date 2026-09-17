@@ -40,8 +40,12 @@ export function CoinDetailModal({ coin, onClose }: CoinDetailModalProps) {
         return
       }
       if (e.key !== 'Tab' || !dialogRef.current) return
+      // `summary` is natively focusable (it's how a keyboard user opens the
+      // "Show hourly data" details) but doesn't match the other selectors —
+      // leaving it out made the trap think the trend-info button was last
+      // and wrap Tab back to Close before ever reaching it.
       const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        'button, [href], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])',
       )
       if (focusable.length === 0) return
       const first = focusable[0]

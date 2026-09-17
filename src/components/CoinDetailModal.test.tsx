@@ -79,4 +79,26 @@ describe('CoinDetailModal', () => {
     await within(dialog).findByText('No price history available for this coin.')
     expect(requestCount).toBe(1)
   })
+
+  test('reaches the hourly-data toggle by keyboard and opens it with Enter', async () => {
+    render(<App />)
+    await screen.findByRole('table')
+    await userEvent.click(screen.getByRole('button', { name: /Bitcoin BTC/ }))
+
+    const dialog = await screen.findByRole('dialog')
+    await within(dialog).findByRole('img', { name: /Hourly price for Bitcoin/ })
+
+    // Focus starts on Close; `summary` isn't in most focusable-element
+    // selector lists, so this catches it silently dropping out of the tab
+    // order (it did, once — the fix added `summary` to the trap's query).
+    await userEvent.tab() // Refresh
+    await userEvent.tab() // trend-info info button
+    await userEvent.tab() // "Show hourly data as a table"
+
+    const summary = within(dialog).getByText('Show hourly data as a table')
+    expect(summary).toHaveFocus()
+
+    await userEvent.keyboard('{Enter}')
+    expect(within(dialog).getByRole('table')).toBeInTheDocument()
+  })
 })
