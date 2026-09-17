@@ -6,7 +6,9 @@ import { SearchBox } from './components/SearchBox'
 import { useCoins } from './hooks/useCoins'
 
 const PAGE_SIZE = 50
-const MAX_PER_PAGE = 150
+// CoinGecko's /coins/markets caps per_page at 250 — this is that ceiling,
+// not an arbitrary choice.
+const MAX_PER_PAGE = 250
 
 function App() {
   const [query, setQuery] = useState('')
