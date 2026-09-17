@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import { CoinList } from './components/CoinList'
+import { RefreshBar } from './components/RefreshBar'
 import { SearchBox } from './components/SearchBox'
 import { useCoins } from './hooks/useCoins'
 
@@ -10,7 +11,7 @@ const MAX_PER_PAGE = 150
 function App() {
   const [query, setQuery] = useState('')
   const [perPage, setPerPage] = useState(PAGE_SIZE)
-  const { state, retry } = useCoins(query, perPage)
+  const { state, retry, lastUpdatedAt } = useCoins(query, perPage)
 
   // Only the default (unsearched) view is paginated — a search already
   // returns every match CoinGecko's /search endpoint has for that query.
@@ -28,6 +29,7 @@ function App() {
       </header>
       <main id="main" tabIndex={-1}>
         <SearchBox value={query} onChange={setQuery} />
+        <RefreshBar lastUpdatedAt={lastUpdatedAt} onRefresh={retry} />
         <CoinList
           state={state}
           query={query}

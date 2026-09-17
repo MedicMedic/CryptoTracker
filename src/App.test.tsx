@@ -70,4 +70,25 @@ describe('App', () => {
 
     await waitFor(() => expect(screen.getAllByRole('row')).toHaveLength(101))
   })
+
+  test('shows a refresh control after load and refetches on click', async () => {
+    render(<App />)
+    await screen.findByRole('table')
+
+    expect(screen.getByText(/^Updated /)).toBeInTheDocument()
+    const refreshButton = screen.getByRole('button', { name: 'Refresh' })
+
+    let requestCount = 0
+    server.use(
+      http.get(`${API_BASE}/coins/markets`, () => {
+        requestCount++
+        return HttpResponse.json([])
+      }),
+    )
+
+    await userEvent.click(refreshButton)
+
+    expect(await screen.findByText('No market data available right now.')).toBeInTheDocument()
+    expect(requestCount).toBe(1)
+  })
 })
