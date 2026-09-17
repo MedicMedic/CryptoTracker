@@ -79,10 +79,14 @@ img {
   top: 8px;
 }
 
+/* Third rule caught twice now (the details summary, this scrollable table) —
+   covering any element explicitly opted into the tab order, not just the
+   specific tags used so far, so the next one doesn't need its own line. */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
-summary:focus-visible {
+summary:focus-visible,
+[tabindex='0']:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }

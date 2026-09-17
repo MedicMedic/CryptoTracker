@@ -203,7 +203,10 @@ export function PriceChart({ data, coinName }: { data: PricePoint[]; coinName: s
 
       <details className="chart-table-toggle">
         <summary>Show hourly data as a table</summary>
-        <div className="table-wrap">
+        {/* A plain overflow:auto div isn't in the tab order by default, so
+            a keyboard-only user has no way to scroll it at all — tabIndex
+            plus the scrollable-region role/label makes it a real stop. */}
+        <div className="table-wrap" tabIndex={0} role="region" aria-label="Hourly price history, scrollable">
           <table>
             <thead>
               <tr>

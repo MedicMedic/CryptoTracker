@@ -100,5 +100,12 @@ describe('CoinDetailModal', () => {
 
     await userEvent.keyboard('{Enter}')
     expect(within(dialog).getByRole('table')).toBeInTheDocument()
+
+    // The revealed table sits in a fixed-height, overflow-y:auto div with no
+    // interactive cells inside it — without a deliberate tabIndex there's no
+    // way to reach it by keyboard at all, let alone scroll it (jsdom has no
+    // real layout, so actual scrolling is verified against the live app).
+    await userEvent.tab()
+    expect(within(dialog).getByRole('region', { name: /Hourly price history/ })).toHaveFocus()
   })
 })
