@@ -1,5 +1,6 @@
 import { requestWithRetry } from './api'
 import { isCoin, type Coin } from '../types/coin'
+import { isRawPricePoint, type PricePoint } from '../types/price-point'
 
 const API_BASE = import.meta.env.VITE_COINGECKO_API_BASE ?? 'https://api.coingecko.com/api/v3'
 
@@ -64,6 +65,23 @@ function byRankThenPrice(a: Coin, b: Coin): number {
   const rankB = b.market_cap_rank ?? Infinity
   if (rankA !== rankB) return rankA - rankB
   return b.current_price - a.current_price
+}
+
+interface MarketChartResponse {
+  prices?: unknown[]
+}
+
+// days=2 gets CoinGecko's hourly granularity (their auto-adjusted resolution
+// for a 2-90 day range) — a day of 5-minutely data would be too dense for an
+// hourly chart, and past 90 days flips to daily.
+export async function fetchCoinHistory(id: string, signal: AbortSignal): Promise<PricePoint[]> {
+  const params = new URLSearchParams({ vs_currency: 'usd', days: '2' })
+  const data = await requestWithRetry<MarketChartResponse>(
+    `${API_BASE}/coins/${encodeURIComponent(id)}/market_chart?${params}`,
+    { signal },
+  )
+  const raw = Array.isArray(data.prices) ? data.prices : []
+  return raw.filter(isRawPricePoint).map(([time, price]) => ({ time, price }))
 }
 
 async function searchIds(query: string, signal: AbortSignal): Promise<string[]> {
