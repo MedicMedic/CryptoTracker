@@ -22,7 +22,7 @@ Copy `.env.example` to `.env` only if you need to point at something other than 
 ## Using it
 
 1. On load, the app fetches the top 50 coins by market cap and lists them with rank, price, and 24h change.
-2. Click "Show more" to extend the default list in steps of 50, up to 250 coins (CoinGecko's own `per_page` ceiling).
+2. Click "Show more" to extend the default list in steps of 50, with no fixed ceiling — past 250 coins it transparently pages through multiple CoinGecko requests (their `per_page` limit) and concatenates the results.
 3. Type in the search box to look up a specific coin by name or symbol (e.g. "doge"). The list narrows to matches after a short debounce.
 4. Click Refresh (next to the "Updated <time>" indicator) to get a new snapshot without reloading the page.
 5. If a request fails, the list shows the server's own error message and a "Try again" button when the failure is one that might succeed on retry (network errors, 5xx, rate limiting).
@@ -37,7 +37,7 @@ Runs the Vitest suite in `src/App.test.tsx` against a mocked CoinGecko API (via 
 
 ## Limitations
 
-- Pagination is capped at 250 coins in the default view (CoinGecko's own `per_page` ceiling, four "Show more" clicks); there's no way to browse past that short of searching by name.
+- No app-level cap on pagination, but every 250 coins costs another request — clicking "Show more" repeatedly toward CoinGecko's full ~17,000-coin list would mean dozens of requests and is likely to hit their public rate limit.
 - Search resolves through CoinGecko's `/search` endpoint (matched by name/symbol) and then re-fetches prices for those specific coins, so it costs two requests instead of one; there's no client-side-only fallback if `/search` is down.
 - No caching between renders — switching away from a search query and back re-fetches instead of reusing the last response.
 - Prices are not live-updating; use the Refresh button (or reload the page) to get a new snapshot.

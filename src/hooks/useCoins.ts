@@ -7,7 +7,7 @@ import type { RequestState } from '../types/request-state'
 // Debounces `query`, cancels the in-flight request on every change (and on
 // unmount), and ignores a response that arrives after its own request was
 // superseded — otherwise a fast "re" reply can overwrite a slower "react" one.
-export function useCoins(query: string, perPage = 50) {
+export function useCoins(query: string, count = 50) {
   const [state, setState] = useState<RequestState<Coin[]>>({ status: 'idle' })
   const [reloadToken, setReloadToken] = useState(0)
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null)
@@ -24,7 +24,7 @@ export function useCoins(query: string, perPage = 50) {
       // ones are ready to replace them in one step.
       setState((prev) => (prev.status === 'success' ? prev : { status: 'loading' }))
       try {
-        const data = await fetchCoins(query, controller.signal, perPage)
+        const data = await fetchCoins(query, controller.signal, count)
         setState({ status: 'success', data })
         setLastUpdatedAt(Date.now())
       } catch (err) {
@@ -41,7 +41,7 @@ export function useCoins(query: string, perPage = 50) {
       clearTimeout(timer)
       controller.abort()
     }
-  }, [query, perPage, reloadToken])
+  }, [query, count, reloadToken])
 
   return { state, retry: () => setReloadToken((n) => n + 1), lastUpdatedAt }
 }
