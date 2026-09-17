@@ -33,7 +33,12 @@ export function CoinList({ state, query, onRetry, onShowMore, onSelectCoin }: Co
   if (state.status === 'error') {
     return (
       <p role="alert" className="status-message">
-        {state.message} {state.retryable && <button onClick={onRetry}>Try again</button>}
+        {state.message}{' '}
+        {state.retryable ? (
+          <button onClick={onRetry}>Try again</button>
+        ) : (
+          <span className="status-note">Retrying won't fix this.</span>
+        )}
       </p>
     )
   }

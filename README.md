@@ -26,7 +26,25 @@ Copy `.env.example` to `.env` only if you need to point at something other than 
 3. Type in the search box to look up a specific coin by name or symbol (e.g. "doge"). The list narrows to matches after a short debounce.
 4. Click Refresh (next to the "Updated <time>" indicator) to get a new snapshot without reloading the page.
 5. Click a coin's name to open a modal with its price history — roughly the last 48 hours, hourly — as a line chart with a hover tooltip and a "Show hourly data as a table" fallback. A dashed segment extends the line one hour past the last real point: a naive trend line (least squares over the last several hours), clearly labeled as not a forecast, with an "ⓘ" next to it explaining how it's calculated.
-6. If a request fails, the list (or the chart) shows the server's own error message and a "Try again" button when the failure is one that might succeed on retry (network errors, 5xx, rate limiting).
+6. If a request fails, the list (or the chart) shows the server's own error message and a "Try again" button when the failure is one that might succeed on retry (network errors, 5xx, rate limiting) — if it won't, the message says so instead of showing a button.
+
+## Operating it by keyboard
+
+Everything in the app is reachable and operable without a mouse:
+
+- The first Tab press reveals a "Skip to main content" link; activating it jumps past the header straight to the coin list.
+- Tab order in the main view: search input → Refresh → the Price and 24h column headers (Enter/Space flips the sort direction and updates the ▲/▼ icon) → each coin's name (Enter/Space opens its detail modal) → Show more.
+- Opening a coin's modal moves focus to its Close button. From there, Tab cycles: Close → Refresh → the trend-line info button (ⓘ, only when a trend line is shown) → "Show hourly data as a table" (Enter/Space expands it) → the hourly data table itself, once expanded, which is its own Tab stop and scrolls with the arrow keys or Page Down/Up. Tab wraps back to Close from the end instead of escaping to the page behind the modal.
+- Escape closes the modal from anywhere inside it and returns focus to the coin button that opened it.
+- Every focusable control shows a visible focus ring when reached by keyboard (via `:focus-visible` — it doesn't appear on a mouse click, so it won't show up when you're just clicking around).
+
+## Demonstrating the loading, error and empty states
+
+All three are reachable without touching the code:
+
+- **Loading** — on a fast connection it resolves before the spinner would show (by design, see Decisions). To see it reliably: open DevTools → Network tab → set throttling to "Slow 3G" → click Refresh (or reload the page). The spinner appears after a short delay and stays until the throttled response lands.
+- **Error** — with DevTools Network throttling set to "Offline," click Refresh (or reload the page, or open a coin's modal). The request fails as a network error, which is retryable: the message reads as a connection failure and a "Try again" button appears — click it (still offline) to see it fail again, or go back online and click it to see it recover. To see the non-retryable branch (no "Try again," "Retrying won't fix this." instead), change `VITE_COINGECKO_API_BASE` in `.env` to a URL that 404s, e.g. `https://api.coingecko.com/api/v3/nonexistent`.
+- **Empty** — type a search with no possible match, e.g. `zzzznotacoin`, into the search box. CoinGecko's `/search` returns no results and the list shows `No coins match "zzzznotacoin".` without ever calling `/coins/markets`.
 
 ## Contributing a feature
 
@@ -98,3 +116,15 @@ Run all three before committing. `npm run build`'s `tsc -b` step is the only pla
 - **Hand-rolled `isCoin` type guard, rather than a schema library** — considered zod, rejected as overkill for the one shape this app actually consumes.
 - **Hand-rolled inline SVG chart, rather than a charting library** — considered Recharts/Chart.js, rejected for one chart type this small; kept the bundle from growing for a single line + hover tooltip.
 - **Show a labeled naive trend projection, rather than no prediction at all** — considered omitting it entirely, went with a clearly-labeled ("not a forecast", with an info tooltip on the methodology) dashed extrapolation instead, on the view that an honestly-labeled naive readout is more useful than either silence or an implied real forecast.
+
+## Out of scope
+
+Not partially built, not planned for later — deliberately not attempted:
+
+- **No accounts, auth, or saved state.** Every visit starts from the same public top-50 view; there's no way to save a personal list, and nothing persists between sessions.
+- **No portfolio tracking.** The app shows market data only — no holdings, no cost basis, no profit/loss, nothing tied to a user's own positions.
+- **No price alerts or notifications.**
+- **No history beyond the ~48 hours CoinGecko's `days=2` window returns.** There's no week/month/year chart view, and no plan to page further back — the trend line is explicitly short-window for the same reason.
+- **No multi-currency display.** Every price is USD; `vs_currency` isn't user-selectable.
+- **No server-side component.** The app calls CoinGecko's public endpoint directly from the browser — no proxy, no API key, no server-side caching. That's also why it's bound by CoinGecko's public rate limit (see Limitations).
+- **No native or mobile-wrapped app.** It's a responsive web page, nothing more.

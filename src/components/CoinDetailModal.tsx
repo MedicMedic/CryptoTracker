@@ -98,7 +98,12 @@ export function CoinDetailModal({ coin, onClose }: CoinDetailModalProps) {
 
         {state.status === 'error' && (
           <p role="alert" className="status-message">
-            {state.message} {state.retryable && <button onClick={retry}>Try again</button>}
+            {state.message}{' '}
+            {state.retryable ? (
+              <button onClick={retry}>Try again</button>
+            ) : (
+              <span className="status-note">Retrying won't fix this.</span>
+            )}
           </p>
         )}
 
